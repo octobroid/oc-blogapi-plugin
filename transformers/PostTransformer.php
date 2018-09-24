@@ -11,6 +11,8 @@ class PostTransformer extends Transformer
 
     public function data(Post $post)
     {
+        $post->setUrl('blog/detail', new \Cms\Classes\Controller);
+
         return [
             'id'                    => (int) $post->id,
             'title'                 => $post->title,
@@ -22,6 +24,7 @@ class PostTransformer extends Transformer
             'created_at'            => date($post->created_at),
             'updated_at'            => date($post->updated_at),
             'featured_images'       => $this->images($post->featured_images),
+            'url'                   => $post->url,
         ];
     }
 
