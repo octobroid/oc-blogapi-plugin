@@ -21,7 +21,7 @@ class PostTransformer extends Transformer
             'published_at'          => date($post->published_at),
             'created_at'            => date($post->created_at),
             'updated_at'            => date($post->updated_at),
-            
+            'featured_images'       => $this->images($post->featured_images),
         ];
     }
 
