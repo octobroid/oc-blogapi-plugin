@@ -23,7 +23,7 @@ class Posts extends ApiController
         }
 
         // Paginate
-        $paginator = $posts->paginate(Input::get('limit', 20));
+        $paginator = $posts->paginate(Input::get('number', 15));
 
         return $this->respondWithPaginator($paginator, new PostTransformer);
     }
