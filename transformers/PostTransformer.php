@@ -6,7 +6,9 @@ use Octobro\API\Classes\Transformer;
 class PostTransformer extends Transformer
 {
     public $availableIncludes = [
+        'comments',
         'categories',
+        'tags'
     ];
 
     public function data(Post $post)
@@ -28,8 +30,18 @@ class PostTransformer extends Transformer
         ];
     }
 
+    public function includeComments(Post $post)
+    {
+        return $this->collection($post->comments, new CommentTransformer);
+    }
+
     public function includeCategories(Post $post)
     {
         return $this->collection($post->categories, new CategoryTransformer);
+    }
+
+    public function includeTags(Post $post)
+    {
+        return $this->collection($post->tags, new TagTransformer);
     }
 }
