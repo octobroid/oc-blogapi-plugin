@@ -25,7 +25,7 @@ class CategoryTransformer extends Transformer
     public function includePosts(Category $category, ParamBag $params = null)
     {
         if ($params === null) {
-           return $this->collection($category->posts()->paginate(), new PostTransformer); 
+           return $this->collection($category->posts, new PostTransformer); 
         }
         
         $usedParams = array_keys(iterator_to_array($params));
