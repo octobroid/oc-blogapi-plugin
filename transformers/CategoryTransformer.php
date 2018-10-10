@@ -4,6 +4,9 @@ use Rainlab\Blog\Models\Category;
 use Octobro\API\Classes\Transformer;
 use Octobro\BlogAPI\Transformers\PostTransformer;
 use League\Fractal\ParamBag;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Pagination\IlluminatePaginatorAdapter;
+
 class CategoryTransformer extends Transformer
 {
     private $validParams = ['pageParam'];
@@ -25,7 +28,7 @@ class CategoryTransformer extends Transformer
     public function includePosts(Category $category, ParamBag $params = null)
     {
         if ($params === null) {
-           return $this->collection($category->posts, new PostTransformer); 
+           return $this->collection($category->posts()->paginate(), new PostTransformer); 
         }
         
         $usedParams = array_keys(iterator_to_array($params));
@@ -42,8 +45,11 @@ class CategoryTransformer extends Transformer
 
         $pageNumber = $pageNumber ? $pageNumber : 1;
         $perPage = $perPage ? $perPage : 10;
-        $posts = $category->posts()->paginate($perPage,$pageNumber);
 
-        return $this->collection($posts, new PostTransformer);
+        $paginator = $category->posts()->paginate($perPage,$pageNumber);
+        $posts = $paginator->getCollection();
+        $resource = $this->collection($posts, new PostTransformer);
+        return $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
+
     }
 }
