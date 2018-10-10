@@ -20,6 +20,8 @@ class Posts extends ApiController
         // Order
         if ($orderBy = Input::get('orderBy') && $orderDirection = Input::get('orderDirection', 'asc')) {
             $posts->orderBy($orderBy, $orderDirection);
+        } else {
+            $posts->orderBy('published_at', 'desc');
         }
 
         // Paginate
