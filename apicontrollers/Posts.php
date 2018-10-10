@@ -10,7 +10,8 @@ class Posts extends ApiController
 
     public function index()
     {
-        $posts = Post::with('categories')->isPublished();
+        // scope Exclude, exlcude columns data for reducing data fetch.
+        $posts = Post::exclude($columns = explode(',',Input::get('exclude')))->with('categories')->isPublished();
 
         //TODO:
         // - Filter by category
