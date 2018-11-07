@@ -13,6 +13,7 @@ class CategoryTransformer extends Transformer
 
     public $availableIncludes = [
         'posts',
+        'children'
     ];
 
     public function data(Category $category)
@@ -25,13 +26,26 @@ class CategoryTransformer extends Transformer
         ];
     }
 
+    public function includeChildren(Category $category, ParamBag $parameters = null)
+    {
+        return $this->implementPaginator($category->children(), $this, $parameters);
+    }
+
     public function includePosts(Category $category, ParamBag $params = null)
     {
-        if ($params === null) {
-           return $this->collection($category->posts()->paginate(), new PostTransformer); 
+        $instance = New PostTransformer;
+
+        return $this->implementPaginator($category->posts(), $instance, $params);
+    }
+
+    public function implementPaginator($collection, $instance, $parameters)
+    {
+
+        if ($parameters === null) {
+            return $this->collection($collection->paginate(), $instance); 
         }
-        
-        $usedParams = array_keys(iterator_to_array($params));
+
+        $usedParams = array_keys(iterator_to_array($parameters));
 
         if ($invalidParams = array_diff($usedParams, $this->validParams)) {
             throw new \Exception(sprintf(
@@ -41,14 +55,17 @@ class CategoryTransformer extends Transformer
             ));
         }
 
-        list($perPage, $pageNumber) = $params->get('pageParam');
+        list($perPage, $pageNumber) = $parameters->get('pageParam');
 
         $pageNumber = $pageNumber ? $pageNumber : 1;
         $perPage = $perPage ? $perPage : 10;
 
-        $paginator = $category->posts()->paginate($perPage,$pageNumber);
-        $posts = $paginator->getCollection();
-        $resource = $this->collection($posts, new PostTransformer);
+        $paginator = $collection->paginate($perPage,$pageNumber);
+
+        $collections = $paginator->getCollection();
+
+        $resource = $this->collection($collections, $instance);
+
         return $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
 
     }
