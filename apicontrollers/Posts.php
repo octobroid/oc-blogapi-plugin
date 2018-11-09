@@ -3,6 +3,7 @@
 use Input;
 use Rainlab\Blog\Models\Post;
 use Octobro\API\Classes\ApiController;
+use Event;
 use Octobro\BlogAPI\Transformers\PostTransformer;
 
 class Posts extends ApiController
@@ -38,6 +39,8 @@ class Posts extends ApiController
         if (! $post) {
             return $this->errorNotFound('Post not found.');
         }
+
+        Event::fire('BlogAPI.ApiControllers.Posts.Show',[$post]);
 
     	return $this->respondwithItem($post, new PostTransformer);
     }
