@@ -17,7 +17,13 @@ class Posts extends ApiController
         //TODO:
         // - Filter by category
         // - Filter by author
-        // - Filter by search query
+
+        // Filter by search query
+        if ($q = get('q'))
+        {
+            $posts->where('title', 'like', "%$q%")
+                ->orWhere('content', 'like', "%$q%");
+        }
 
         // Order
         if ($orderBy = Input::get('orderBy') && $orderDirection = Input::get('orderDirection', 'asc')) {
