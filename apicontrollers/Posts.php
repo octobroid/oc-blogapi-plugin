@@ -21,8 +21,10 @@ class Posts extends ApiController
         // Filter by search query
         if ($q = get('q'))
         {
-            $posts->where('title', 'like', "%$q%")
-                ->orWhere('content', 'like', "%$q%");
+            $posts->where(function($query) use ($q) {
+                return $query->where('title', 'like', "%$q%")
+                    ->orWhere('content', 'like', "%$q%"); 
+            });
         }
 
         // Order
